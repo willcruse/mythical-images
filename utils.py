@@ -19,6 +19,23 @@ def print_unique_file_ext(data):
         file_extensions.add(Path(file_name).suffix)
     print(list(file_extensions))
 
+def update_yaml(data: Dict[str, Any]) -> Dict[str, Any]:
+    new_dict = {}
+    for key, entry in data.items():
+        file_name = entry.get("file-path")
+        if file_name is not None:
+            file_check = Path(file_name)
+            print(file_check)
+            if file_check.exists():
+                new_dict[key] = entry
+    return new_dict
+
 if __name__=="__main__":
-    data = yaml.load(Path("./clean-data-big/image-data.yaml").open())
+    yaml_base_path = Path("./clean-data-big/")
+    data = yaml.load((yaml_base_path / Path("image-data.yaml")).open())
     print_unique_file_ext(data)
+    new_data = update_yaml(data)
+
+    file_path = str(yaml_base_path / Path("new-image-data.yaml"))
+    with open(file_path, "w") as file:
+        yaml.dump(new_data, file)
